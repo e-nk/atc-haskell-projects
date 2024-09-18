@@ -10,7 +10,7 @@ Start the Obelisk full-stack server by navigating to the project folder and runn
 ob run
 ```
 
-This will load your development environment with all the necessary Haskell dependencies and start an Obelisk server on `http://localhost:8000`.
+This will load your development environment with all the necessary Haskell dependencies and start an Obelisk server on `http://localhost:8000`. Navigate to this address in your browser to see the web application.
 
 You can also run the program in an Obelisk REPL using [GHCi](https://downloads.haskell.org/ghc/latest/docs/users_guide/ghci.html):
 

@@ -4,8 +4,7 @@ Fork this repository - each branch is a different project
 ## Instructions for Completing and Submitting Your Project
 
 1. **Fork the Project**
-   - Navigate to the repository page for the project.
-   - Click the "Fork" button at the top-right of the page to create your own copy of the repository.
+   - Click the "Fork" button at the top-right of this page to create your own copy of the repository.
    - **Make sure you deselect the "Copy the main branch only" option** so that all projects are copied to the forked repository.
 
 3. **Ensure You Clone All Branches**

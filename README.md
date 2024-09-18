@@ -2,8 +2,9 @@
 
 ## How to Run the Application
 
-1. Install Nix if you haven't already. Follow the instructions at https://nixos.org/download.html.
-2. Load the Nix environment by navigating to the project folder and running in your terminal:
+Install Nix if you haven't already. Follow the instructions at https://nixos.org/download.html.
+
+Load the Nix environment by navigating to the project folder and running in your terminal:
 
 ```bash
 nix-shell

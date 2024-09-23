@@ -6,6 +6,9 @@ pkgs.mkShell {
     pkgs.haskellPackages.ghc
     pkgs.haskellPackages.cabal-install
   ];
+  nativeBuildInputs = [
+    pkgs.haskellPackages.haskell-language-server
+  ];
 
   shellHook = ''
     cabal update

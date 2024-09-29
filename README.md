@@ -7,6 +7,10 @@ Install Nix if you haven't already. Follow the instructions at https://nixos.org
 Load the Nix environment by navigating to the project folder and running in your terminal:
 
 ```bash
+# If you haven't already 
+git clone git@github.com:Ace-Interview-Prep/atc-haskell-projects.git
+cd atc-haskell-projects
+git switch 1-todo-manager
 nix-shell
 ```
 

@@ -11,6 +11,7 @@ Load the Nix environment by navigating to the project folder and running in your
 git clone git@github.com:Ace-Interview-Prep/atc-haskell-projects.git
 cd atc-haskell-projects
 git switch 1-todo-manager
+
 nix-shell
 ```
 

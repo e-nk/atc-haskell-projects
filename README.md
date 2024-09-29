@@ -4,6 +4,8 @@
 
 Install Nix if you haven't already. Follow the instructions at https://nixos.org/download.html.
 
+You'll need to ensure your Github is properly set up for SSH. Follow the instructions at https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent 
+
 Load the Nix environment by navigating to the project folder and running in your terminal:
 
 ```bash

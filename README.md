@@ -1,111 +1,67 @@
-# Project 1: Todo List Manager
+# Todo List Manager
 
-## How to Run the Application
+A simple command-line Todo List application built using Haskell. This application allows users to manage tasks, including adding, viewing, editing, marking as complete, and deleting tasks. The tasks are saved in a file for persistent storage.
 
-Install Nix if you haven't already. Follow the instructions at https://nixos.org/download.html.
+## Features
 
-You'll need to ensure your Github is properly set up for SSH. Follow the instructions at https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent 
+- **Add Tasks**: Quickly add new tasks with a description, priority (High, Medium, Low), and due date.
+- **View Tasks**: Display all tasks or filter to see only incomplete tasks.
+- **Edit Tasks**: Modify the description of existing tasks.
+- **Complete Tasks**: Mark tasks as completed.
+- **Delete Tasks**: Remove tasks from the list.
+- **Persistent Storage**: Tasks are saved to a file (`tasks.txt`), allowing them to persist between sessions.
+- **Help Menu**: Easily access available commands and usage instructions.
 
-Load the Nix environment by navigating to the project folder and running in your terminal:
+## Installation
 
-```bash
-# If you haven't already 
-git clone git@github.com:Ace-Interview-Prep/atc-haskell-projects.git
-cd atc-haskell-projects
-git switch 1-todo-manager
+### Prerequisites
 
-nix-shell
-```
+- **GHC**: The Glasgow Haskell Compiler
+- **Stack**: A Haskell build tool
 
-This will load your development environment with all the necessary Haskell dependencies.
+### Steps
 
-Build the project using cabal:
+1. **Clone the repository**:
+    ```bash
+    git clone git@github.com:Ace-Interview-Prep/atc-haskell-projects.git
+    ```
+		git checkout 1-todo-manager
 
-```bash
-cabal build
-```
+2. **Build the project**:
+    ```bash
+    stack build
+    ```
 
-Run the application:
+3. **Run the application**:
+    ```bash
+    stack exec todo-list-exe
+    ```
 
-```bash
-cabal run
-```
+## Usage
 
-Test the CLI by typing in commands and interacting with the recursive prompt.
+Once the application is running, you will be presented with the following options:
 
-## Software Requirements
+- `add`: Add a new task.
+- `view`: View all tasks.
+- `view-incomplete`: View only incomplete tasks.
+- `complete`: Mark a task as complete.
+- `edit`: Edit an existing task.
+- `delete`: Delete a task.
+- `exit`: Exit the application.
+- `--help` or `-h`: Display the help menu.
 
-### Basic Functionality:
-- Users can add a new task to the to-do list.
-- Users can view all tasks in the to-do list.
-- Users can mark a task as completed.
-- Users can delete a task from the list.
-- Users can edit a task’s description.
-- Tasks should be stored persistently (e.g., in a text file).
+### Example
 
-### Advanced Features (Optional):
-- Allow users to prioritize tasks (e.g., High, Medium, Low).
-- Implement due dates for tasks and sort tasks by due date.
-- Filter tasks by their completion status (e.g., show only incomplete tasks).
-- Provide command-line options to manage tasks without entering an interactive mode (e.g., `todo add "Buy groceries"`).
+To add a new task, type `add`, then follow the prompts to enter the task details. For instance:
 
-### User Interface:
-- A simple and intuitive command-line interface.
-- Display a help menu when requested (`--help` or `-h`), listing all available commands.
 
-### Error Handling:
-- The application should handle errors gracefully, providing user-friendly messages (e.g., when trying to mark a non-existent task as complete).
+## Contributing
 
-### Code Structure:
-- The code should be modular, separating concerns (e.g., task management, file handling, user interaction).
-- Follow best practices for Haskell, including proper use of types, functions, and purity where applicable.
+Contributions are welcome! If you have suggestions for improvements or features, feel free to fork the repository and submit a pull request.
 
-## Acceptance Criteria:
-- **Task Management:**
-  - The user can successfully add a new task, view it, mark it as complete, edit it, and delete it.
-  - Tasks persist between sessions (i.e., closing and reopening the application should not lose data).
+## License
 
-- **Advanced Features (if implemented):**
-  - Tasks can be prioritized, and the list can be filtered or sorted as per user input.
-  - Tasks with due dates are sorted correctly when the user requests it.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- **User Interface:**
-  - The help menu is clear and correctly displays all available commands.
-  - Commands are intuitive and easy to use.
 
-- **Error Handling:**
-  - The application should not crash or behave unexpectedly when given invalid input (e.g., marking a non-existent task as complete).
 
-- **Code Quality:**
-  - The code should be clean, well-documented, and follow Haskell best practices.
-  - Modular design should be evident, with distinct functions and types handling different aspects of the application.
-
-## Rubric:
-
-### Basic Functionality (40 points):
-- Adding a task (10 points)
-- Viewing tasks (5 points)
-- Marking a task as complete (10 points)
-- Deleting a task (10 points)
-- Editing a task (5 points)
-
-### Advanced Features (Optional - 20 points):
-- Task prioritization (5 points)
-- Due dates and sorting (5 points)
-- Filtering tasks by status (5 points)
-- Command-line options for non-interactive mode (5 points)
-
-### User Interface (20 points):
-- Help menu (10 points)
-- Overall usability and intuitiveness (10 points)
-
-### Error Handling (10 points):
-- Graceful handling of invalid input (5 points)
-- User-friendly error messages (5 points)
-
-### Code Quality (30 points):
-- Modular design (10 points)
-- Code cleanliness and readability (10 points)
-- Use of Haskell best practices (10 points)
-
-**Total: 120 points (100 if advanced features are not implemented)**

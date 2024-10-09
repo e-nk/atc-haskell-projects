@@ -25,7 +25,9 @@ source-repository head
 
 library
   exposed-modules:
+      Game
       Lib
+      UI
   other-modules:
       Paths_tic_tac_toe_cli
   autogen-modules:
@@ -35,6 +37,9 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , mtl
+    , random
+    , text
   default-language: Haskell2010
 
 executable tic-tac-toe-cli-exe
@@ -48,6 +53,9 @@ executable tic-tac-toe-cli-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , mtl
+    , random
+    , text
     , tic-tac-toe-cli
   default-language: Haskell2010
 
@@ -63,5 +71,8 @@ test-suite tic-tac-toe-cli-test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , mtl
+    , random
+    , text
     , tic-tac-toe-cli
   default-language: Haskell2010

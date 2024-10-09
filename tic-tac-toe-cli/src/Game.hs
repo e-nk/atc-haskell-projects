@@ -6,8 +6,12 @@ module Game (
     makeMove,
     checkWin,
     isDraw,
-    switchPlayer
+    switchPlayer,
+    aiMove
 ) where
+
+import Data.List (transpose)
+import System.Random (randomRIO)
 
 data Player = X | O deriving (Show, Eq)
 
@@ -42,12 +46,11 @@ replaceAt idx newValue xs =
         _ -> xs
 
 checkWin :: Player -> Board -> Bool
-checkWin player gameBoard = any (all (== Just player)) (rows ++ cols ++ diags)
-  where
-    rows = gameBoard
-    cols = transpose gameBoard
-    diags = [[gameBoard !! i !! i | i <- [0..2]], [gameBoard !! i !! (2 - i) | i <- [0..2]]]
-    transpose = foldr (zipWith (:)) (repeat [])
+checkWin player board =
+    let rows = board
+        cols = transpose board
+        diags = [ [board !! i !! i | i <- [0..2]], [board !! i !! (2 - i) | i <- [0..2]] ]
+    in any (all (== Just player)) (rows ++ cols ++ diags)
 
 isDraw :: Board -> Bool
 isDraw currentBoard = all (/= Nothing) (concat currentBoard)
@@ -55,3 +58,9 @@ isDraw currentBoard = all (/= Nothing) (concat currentBoard)
 switchPlayer :: Player -> Player
 switchPlayer X = O
 switchPlayer O = X
+
+aiMove :: Board -> Player -> IO (Int, Int)
+aiMove board player = do
+    let emptyCells = [(row, col) | row <- [1..3], col <- [1..3], board !! (row - 1) !! (col - 1) == Nothing]
+    randomIndex <- randomRIO (0, length emptyCells - 1)
+    return (fst (emptyCells !! randomIndex), snd (emptyCells !! randomIndex))

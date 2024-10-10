@@ -41,6 +41,10 @@ To run this Tic Tac Toe game, you need to have Haskell and Stack installed on yo
 1. **Clone the repository**:
    ```bash
    git clone git@github.com:e-nk/atc-haskell-projects.git
+	 ```
+
+	 	 git checkout 2-tic-tac-toe
+
 2. **Navigate into the project directory**:
 
    		cd tic-tac-toe-cli

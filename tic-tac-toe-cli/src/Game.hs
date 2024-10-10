@@ -46,10 +46,11 @@ replaceAt idx newValue xs =
         _ -> xs
 
 checkWin :: Player -> Board -> Bool
-checkWin player board =
-    let rows = board
-        cols = transpose board
-        diags = [ [board !! i !! i | i <- [0..2]], [board !! i !! (2 - i) | i <- [0..2]] ]
+checkWin player currentBoard =
+    let rows = currentBoard
+        cols = transpose currentBoard
+        diags = [ [currentBoard !! i !! i | i <- [0..2]], 
+                   [currentBoard !! i !! (2 - i) | i <- [0..2]] ]
     in any (all (== Just player)) (rows ++ cols ++ diags)
 
 isDraw :: Board -> Bool
@@ -60,7 +61,10 @@ switchPlayer X = O
 switchPlayer O = X
 
 aiMove :: Board -> Player -> IO (Int, Int)
-aiMove board player = do
+aiMove board _ = do
     let emptyCells = [(row, col) | row <- [1..3], col <- [1..3], board !! (row - 1) !! (col - 1) == Nothing]
-    randomIndex <- randomRIO (0, length emptyCells - 1)
-    return (fst (emptyCells !! randomIndex), snd (emptyCells !! randomIndex))
+    if null emptyCells
+        then error "No available moves for AI."
+        else do
+            randomIndex <- randomRIO (0, length emptyCells - 1)
+            return (fst (emptyCells !! randomIndex), snd (emptyCells !! randomIndex))

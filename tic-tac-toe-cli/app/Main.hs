@@ -1,16 +1,22 @@
 {-# LANGUAGE DeriveFunctor #-}
 
 import System.Random (randomRIO)
-import Data.Maybe (isJust, isNothing)
+import Data.Maybe (isJust, isNothing, fromJust)
 import Data.List (transpose)
 
 data Player = X | O deriving (Show, Eq)
 type Board = [[Maybe Player]]
-data GameState = GameState { board :: Board, currentPlayer :: Player } deriving (Show)
-data Scores = Scores { xWins :: Int, oWins :: Int, draws :: Int } deriving (Show)
+data GameState = GameState { board :: Board, currentPlayer :: Player, gameMode :: GameMode } deriving (Show)
+data GameMode = PvP | PvAI deriving (Show, Eq)
+
+-- Scores data structure
+data Scores = Scores { playerXScore :: Int, playerOScore :: Int } deriving (Show)
 
 emptyBoard :: Board
 emptyBoard = replicate 3 (replicate 3 Nothing)
+
+initialScores :: Scores
+initialScores = Scores 0 0
 
 displayInstructions :: IO ()
 displayInstructions = do
@@ -48,7 +54,9 @@ aiMove b player = do
         then error "No available moves for AI."
         else do
             idx <- randomRIO (0, length availableMoves - 1)
-            return (availableMoves !! idx)
+            let (row, col) = availableMoves !! idx
+            putStrLn $ "AI chooses: " ++ show (row * 3 + col + 1)  -- Display AI's move
+            return (row, col)
 
 -- Convert 1-9 input to row and column
 positionToCoordinates :: Int -> (Int, Int)
@@ -75,7 +83,13 @@ checkWin player b = any (all (== Just player)) (rows ++ cols ++ diags)
 isDraw :: Board -> Bool
 isDraw b = all isJust (concat b)
 
--- Play again prompt
+-- Parse move input
+parseMove :: String -> Maybe Int
+parseMove input = case reads input of
+    [(pos, "")] | pos >= 1 && pos <= 9 -> Just pos
+    _                                   -> Nothing
+
+-- Ask to play again
 askPlayAgain :: IO Bool
 askPlayAgain = do
     putStrLn "Play again? (y/n):"
@@ -85,91 +99,85 @@ askPlayAgain = do
         "n" -> return False
         _   -> askPlayAgain  -- Ask again if invalid input
 
--- Game loop
+-- Game mode selection
+selectGameMode :: IO GameMode
+selectGameMode = do
+    putStrLn "Choose game mode: (1) Player vs Player (2) Player vs AI"
+    choice <- getLine
+    case choice of
+        "1" -> return PvP
+        "2" -> return PvAI
+        _   -> do
+            putStrLn "Invalid choice. Try again."
+            selectGameMode
+
+-- Update scores
+updateScores :: Maybe Player -> Scores -> Scores
+updateScores (Just X) (Scores x o) = Scores (x + 1) o
+updateScores (Just O) (Scores x o) = Scores x (o + 1)
+updateScores Nothing scores = scores
+
+-- Display the scores
+displayScores :: Scores -> IO ()
+displayScores (Scores x o) = do
+    putStrLn $ "Player X: " ++ show x
+    putStrLn $ "Player O: " ++ show o
+
+-- Main game loop
 gameLoop :: GameState -> Scores -> IO ()
-gameLoop state scores = do
-    putStrLn $ "Player " ++ show (currentPlayer state) ++ "'s turn:"
-    printBoard (board state)
-    if currentPlayer state == O  -- AI's turn
+gameLoop state@(GameState b player mode) scores = do
+    printBoard b
+    if checkWin (switchPlayer player) b
         then do
-            (row, col) <- aiMove (board state) (currentPlayer state)
-            putStrLn $ "AI chooses: " ++ show (row * 3 + col + 1)
-            case makeMove row col (board state) (currentPlayer state) of
-                Just newBoard -> handleMove newBoard (switchPlayer (currentPlayer state)) scores
-                Nothing -> gameLoop state scores
-        else do
-            putStr "Enter your move (1-9): "
-            command <- getLine
-            handlePlayerMove command state scores
+            putStrLn $ "Player " ++ show (switchPlayer player) ++ " wins!"
+            let updatedScores = updateScores (Just (switchPlayer player)) scores
+            displayScores updatedScores
+            playAgain <- askPlayAgain
+            if playAgain
+                then gameLoop (GameState emptyBoard X mode) updatedScores
+                else putStrLn "Thanks for playing!"
+        else if isDraw b
+            then do
+                putStrLn "It's a draw!"
+                displayScores scores
+                playAgain <- askPlayAgain
+                if playAgain
+                    then gameLoop (GameState emptyBoard X mode) scores
+                    else putStrLn "Thanks for playing!"
+            else do
+                newBoard <- case mode of
+                    PvP  -> playerMove player b
+                    PvAI -> if player == X
+                            then playerMove player b
+                            else do
+                                (aiRow, aiCol) <- aiMove b player
+                                return (fromJust (makeMove aiRow aiCol b player))
+                gameLoop (GameState newBoard (switchPlayer player) mode) scores
 
-handlePlayerMove :: String -> GameState -> Scores -> IO ()
-handlePlayerMove command state scores =
-    case command of
-        "exit" -> putStrLn "Thank you for playing!"
-        "help" -> displayInstructions >> gameLoop state scores
-        _ -> case parseMove command of
-            Just pos -> 
-                let (row, col) = positionToCoordinates pos
-                in case makeMove row col (board state) (currentPlayer state) of
-                    Just newBoard -> handleMove newBoard (switchPlayer (currentPlayer state)) scores
-                    Nothing -> do
-                        putStrLn "That spot is already taken!"
-                        gameLoop state scores
-            Nothing -> do
-                putStrLn "Invalid input! Please enter a number between 1 and 9."
-                gameLoop state scores
-
-parseMove :: String -> Maybe Int
-parseMove input =
-    case reads input of
-        [(n, "")] | n >= 1 && n <= 9 -> Just n
-        _ -> Nothing
+-- Player move input and validation
+playerMove :: Player -> Board -> IO Board
+playerMove player b = do
+    putStrLn $ "Player " ++ show player ++ "'s turn:"
+    input <- getLine
+    case parseMove input of
+        Just pos -> do
+            let (row, col) = positionToCoordinates pos
+            case makeMove row col b player of
+                Just newBoard -> return newBoard
+                Nothing -> do
+                    putStrLn "That position is already taken. Try again."
+                    playerMove player b
+        Nothing -> do
+            putStrLn "Invalid input. Please enter a number from 1 to 9."
+            playerMove player b
 
 switchPlayer :: Player -> Player
 switchPlayer X = O
 switchPlayer O = X
 
--- Handle game over and scores
-handleMove :: Board -> Player -> Scores -> IO ()
-handleMove b player scores = do
-    if checkWin (switchPlayer player) b
-        then do
-            putStrLn $ "Player " ++ show (switchPlayer player) ++ " wins!"
-            let updatedScores = updateScores (switchPlayer player) scores
-            printScores updatedScores
-            playAgain <- askPlayAgain
-            if playAgain
-                then gameLoop (GameState emptyBoard X) updatedScores
-                else putStrLn "Goodbye!"
-        else if isDraw b
-            then do
-                putStrLn "It's a draw!"
-                let updatedScores = updateScoresDraw scores
-                printScores updatedScores
-                playAgain <- askPlayAgain
-                if playAgain
-                    then gameLoop (GameState emptyBoard X) updatedScores
-                    else putStrLn "Goodbye!"
-            else gameLoop (GameState b player) scores
-
--- Update the scores after a win
-updateScores :: Player -> Scores -> Scores
-updateScores X scores = scores { xWins = xWins scores + 1 }
-updateScores O scores = scores { oWins = oWins scores + 1 }
-
--- Update the scores after a draw
-updateScoresDraw :: Scores -> Scores
-updateScoresDraw scores = scores { draws = draws scores + 1 }
-
-printScores :: Scores -> IO ()
-printScores scores = do
-    putStrLn "Current Scores:"
-    putStrLn $ "X Wins: " ++ show (xWins scores)
-    putStrLn $ "O Wins: " ++ show (oWins scores)
-    putStrLn $ "Draws: " ++ show (draws scores)
-
+-- Main entry point
 main :: IO ()
 main = do
     displayInstructions
-    let initialScores = Scores 0 0 0
-    gameLoop (GameState emptyBoard X) initialScores
+    mode <- selectGameMode
+    gameLoop (GameState emptyBoard X mode) initialScores

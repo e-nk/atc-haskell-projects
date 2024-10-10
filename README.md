@@ -1,103 +1,107 @@
-# Project 2: Tic Tac Toe CLI
+# Tic Tac Toe - Command Line Game
 
-## How to Run the Application
+## Overview
+This is a simple command-line Tic Tac Toe game written in Haskell. Players can compete against each other or play against an AI opponent. The game is played on a 3x3 grid, and players take turns marking a cell with their symbol (X or O). The first player to get three marks in a row (horizontally, vertically, or diagonally) wins. If all cells are filled without a winner, the game ends in a draw.
 
-Install Nix if you haven't already. Follow the instructions at https://nixos.org/download.html.
+## Features
+- **Player vs Player mode**: Two players can play against each other by taking turns.
+- **Player vs AI mode**: Play against a basic AI opponent that randomly selects its moves.
+- **Scorekeeping**: Keep track of the number of wins for each player.
+- **Help Menu**: Players can view instructions during gameplay by typing `help`.
+- **Restart Option**: After each game, players can choose to play again or exit.
+  
+## How to Play
+1. The game starts by asking the player to choose the game mode:
+   - **(1)** Player vs Player
+   - **(2)** Player vs AI
+2. The board layout is displayed as a 3x3 grid with cells numbered from 1 to 9.
+   - Example:
+     ```
+     1 | 2 | 3
+     ---------
+     4 | 5 | 6
+     ---------
+     7 | 8 | 9
+     ```
+3. Players take turns to input a number corresponding to the cell where they want to place their mark.
+   - Player X moves first, followed by Player O or the AI.
+4. The game checks for a winner after each move. If a player gets three marks in a row, they win the game.
+5. If the board is full and no player has won, the game ends in a draw.
 
-Load the Nix environment by navigating to the project folder and running in your terminal:
+## Commands
+- **Move**: To make a move, input a number from 1 to 9 corresponding to the desired cell.
+- **Help**: Type `help` during the game to display the help menu with instructions.
+- **Exit**: Type `exit` to quit the game at any time.
 
-```bash
-nix-shell
-```
+## Installation
 
-This will load your development environment with all the necessary Haskell dependencies.
+To run this Tic Tac Toe game, you need to have Haskell and Stack installed on your machine.
 
-Build the project using cabal:
+### Steps:
+1. **Clone the repository**:
+   ```bash
+   git clone git@github.com:e-nk/atc-haskell-projects.git
+2. **Navigate into the project directory**:
 
-```bash
-cabal build
-```
+   		cd tic-tac-toe-cli
 
-Run the application:
+3. **Build the project**:
 
-```bash
-cabal run
-```
+   		stack run
 
-Test the CLI by typing in commands and interacting with the recursive prompt.
 
-## Software Requirements
+## Dependencies
+The game requires the following dependencies:
 
-### Basic Functionality:
-- Users can play a game of Tic Tac Toe against another player (two-player mode).
-- The game board should be displayed in the command line.
-- Players should be able to place their mark (X or O) on the board by specifying the row and column.
-- The game should detect and announce when a player has won or when the game ends in a draw.
-- The game should allow players to restart the game after it ends.
+- **base**: The Haskell base library.
+- **random**: For generating random moves for the AI.
+- **maybe**: To handle optional values and missing data.
 
-### Advanced Features (Optional):
-- Implement an AI opponent that players can play against.
-- Allow players to choose their mark (X or O) before the game starts.
-- Implement a scoring system that tracks wins, losses, and draws.
-- Provide a command-line option to view the help menu during the game.
+These dependencies are managed by Stack and will be automatically installed when you build the project.
 
-### User Interface:
-- The game board should be clearly displayed after each move, with current player information.
-- Display a help menu that explains how to make moves and restart the game.
+## Help Menu
+During gameplay, you can access the help menu by typing `help`. The help menu provides detailed instructions on how to make moves, restart the game, and other game-related information.
 
-### Error Handling:
-- The game should prevent invalid moves (e.g., placing a mark in an already occupied cell or outside the grid).
-- The application should handle input errors gracefully and prompt the user to try again.
+- Example Gameplay:
+     ```
+		 $ stack exec tic-tac-toe-cli-exe
+			Board layout:
+			1 | 2 | 3
+			---------
+			4 | 5 | 6
+			---------
+			7 | 8 | 9
 
-### Code Structure:
-- The code should be modular, separating concerns (e.g., game logic, user input, display).
-- Follow best practices for Haskell, ensuring functions are pure and data types are well-defined.
+			Choose game mode: (1) Player vs Player (2) Player 	vs AI
+			2
 
-## Acceptance Criteria:
-- **Game Mechanics:**
-  - The game must accurately detect win conditions and draws.
-  - Players should be able to make moves without errors, and the board should update correctly.
+			Player X's turn:
+			. . .
+			---------
+			. . .
+			---------
+			. . .
+			Enter your move (1-9): 4
 
-- **Advanced Features (if implemented):**
-  - The AI should make reasonable moves and provide a challenging opponent.
-  - The scoring system should correctly track results and reset when requested.
+			AI chooses: 1
+			O . .
+			---------
+			X . .
+			---------
+			. . .
 
-- **User Interface:**
-  - The game should display the board and instructions clearly.
-  - The help menu should be accessible and informative.
+			Player X's turn:
+			...
 
-- **Error Handling:**
-  - Invalid moves should be prevented, and the user should be prompted to enter a valid move.
-  - The game should not crash due to invalid input.
 
-- **Code Quality:**
-  - The code should be clean, modular, and well-documented.
-  - Haskell best practices should be evident throughout the project.
+     ```
+## Contributing
+Feel free to fork this project and submit pull requests to improve or add features to the game. Contributions are welcome!
 
-## Rubric:
+## Acknowledgements
 
-### Basic Functionality (40 points):
-- Two-player mode (15 points)
-- Board display and updating (10 points)
-- Win/draw detection (10 points)
-- Game restart option (5 points)
+This `README.md` gives a clear overview of the game, installation instructions, gameplay features, commands, and an example of how the game runs in the terminal.
 
-### Advanced Features (Optional - 20 points):
-- AI opponent (10 points)
-- Customizable player marks (5 points)
-- Scoring system (5 points)
+This project was made with ❤️ and ☕ by:
 
-### User Interface (20 points):
-- Board clarity and player information (10 points)
-- Help menu (10 points)
-
-### Error Handling (10 points):
-- Prevention of invalid moves (5 points)
-- Graceful handling of input errors (5 points)
-
-### Code Quality (30 points):
-- Modular design (10 points)
-- Code cleanliness and readability (10 points)
-- Use of Haskell best practices (10 points)
-
-**Total: 120 points (100 if advanced features are not implemented)**
+[Enock Kipkoech](https://github.com/e-nk)

@@ -18,20 +18,26 @@ emptyBoard = replicate 3 (replicate 3 Nothing)
 initialScores :: Scores
 initialScores = Scores 0 0
 
+-- Display instructions at the beginning or when help is requested
 displayInstructions :: IO ()
 displayInstructions = do
+    putStrLn "\n=== Tic-Tac-Toe Help Menu ==="
     putStrLn "Instructions:"
     putStrLn "1. The game is played on a 3x3 grid."
-    putStrLn "2. Players take turns to place their marks (X or O) in an empty cell."
-    putStrLn "3. The first player to get three of their marks in a row wins."
-    putStrLn "4. Enter a number from 1 to 9 to place your mark in the corresponding cell."
-    putStrLn "5. Type 'exit' to quit the game or 'help' to see this message again."
+    putStrLn "2. Players take turns placing their marks (X or O) in an empty cell."
+    putStrLn "3. Enter a number from 1 to 9 to place your mark in the corresponding cell."
+    putStrLn "   For example: Entering 1 places a mark in the top-left corner."
+    putStrLn "4. The first player to get three of their marks in a row (horizontally, vertically, or diagonally) wins."
+    putStrLn "5. Enter 'help' at any time to display this help menu."
+    putStrLn "6. Enter 'exit' at any time to quit the game."
+    putStrLn "7. After the game ends, you'll be asked whether to play again."
     putStrLn "Board layout:"
     putStrLn "1 | 2 | 3"
     putStrLn "---------"
     putStrLn "4 | 5 | 6"
     putStrLn "---------"
     putStrLn "7 | 8 | 9"
+    putStrLn "=============================\n"
 
 printBoard :: Board -> IO ()
 printBoard b = do
@@ -115,67 +121,59 @@ selectGameMode = do
 updateScores :: Maybe Player -> Scores -> Scores
 updateScores (Just X) (Scores x o) = Scores (x + 1) o
 updateScores (Just O) (Scores x o) = Scores x (o + 1)
-updateScores Nothing scores = scores
+updateScores Nothing scores = scores  -- No change if it's a draw
 
--- Display the scores
 displayScores :: Scores -> IO ()
 displayScores (Scores x o) = do
-    putStrLn $ "Player X: " ++ show x
-    putStrLn $ "Player O: " ++ show o
+    putStrLn $ "Scores:\nPlayer X: " ++ show x ++ "\nPlayer O: " ++ show o
 
--- Main game loop
 gameLoop :: GameState -> Scores -> IO ()
-gameLoop state@(GameState b player mode) scores = do
+gameLoop (GameState b player mode) scores = do
     printBoard b
-    if checkWin (switchPlayer player) b
-        then do
-            putStrLn $ "Player " ++ show (switchPlayer player) ++ " wins!"
-            let updatedScores = updateScores (Just (switchPlayer player)) scores
-            displayScores updatedScores
-            playAgain <- askPlayAgain
-            if playAgain
-                then gameLoop (GameState emptyBoard X mode) updatedScores
-                else putStrLn "Thanks for playing!"
-        else if isDraw b
-            then do
-                putStrLn "It's a draw!"
-                displayScores scores
-                playAgain <- askPlayAgain
-                if playAgain
-                    then gameLoop (GameState emptyBoard X mode) scores
-                    else putStrLn "Thanks for playing!"
-            else do
-                newBoard <- case mode of
-                    PvP  -> playerMove player b
-                    PvAI -> if player == X
-                            then playerMove player b
-                            else do
-                                (aiRow, aiCol) <- aiMove b player
-                                return (fromJust (makeMove aiRow aiCol b player))
-                gameLoop (GameState newBoard (switchPlayer player) mode) scores
-
--- Player move input and validation
-playerMove :: Player -> Board -> IO Board
-playerMove player b = do
     putStrLn $ "Player " ++ show player ++ "'s turn:"
-    input <- getLine
-    case parseMove input of
-        Just pos -> do
-            let (row, col) = positionToCoordinates pos
-            case makeMove row col b player of
-                Just newBoard -> return newBoard
-                Nothing -> do
-                    putStrLn "That position is already taken. Try again."
-                    playerMove player b
-        Nothing -> do
-            putStrLn "Invalid input. Please enter a number from 1 to 9."
-            playerMove player b
+    moveInput <- getLine
+    case moveInput of
+        "help" -> do
+            displayInstructions
+            gameLoop (GameState b player mode) scores
+        "exit" -> putStrLn "Thanks for playing!"
+        _ -> case parseMove moveInput of
+            Just pos -> do
+                let (row, col) = positionToCoordinates pos
+                case makeMove row col b player of
+                    Just newBoard -> do
+                        if checkWin player newBoard
+                            then do
+                                printBoard newBoard
+                                putStrLn $ "Player " ++ show player ++ " wins!"
+                                let updatedScores = updateScores (Just player) scores
+                                displayScores updatedScores
+                                playAgain <- askPlayAgain
+                                if playAgain
+                                    then gameLoop (GameState emptyBoard X mode) updatedScores
+                                    else putStrLn "Thanks for playing!"
+                        else if isDraw newBoard
+                            then do
+                                printBoard newBoard
+                                putStrLn "It's a draw!"
+                                let updatedScores = updateScores Nothing scores
+                                displayScores updatedScores
+                                playAgain <- askPlayAgain
+                                if playAgain
+                                    then gameLoop (GameState emptyBoard X mode) updatedScores
+                                    else putStrLn "Thanks for playing!"
+                        else gameLoop (GameState newBoard (switchPlayer player) mode) scores
+                    Nothing -> do
+                        putStrLn "Invalid move, try again."
+                        gameLoop (GameState b player mode) scores
+            Nothing -> do
+                putStrLn "Invalid input. Please enter a number from 1 to 9."
+                gameLoop (GameState b player mode) scores
 
 switchPlayer :: Player -> Player
 switchPlayer X = O
 switchPlayer O = X
 
--- Main entry point
 main :: IO ()
 main = do
     displayInstructions

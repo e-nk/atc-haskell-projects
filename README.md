@@ -14,18 +14,23 @@ Fork this repository - each branch is a different project
      ```
 
 4. **Complete the Project**
+   - Each branch in this repository has a separate project for you to complete. Checkout the branch to get started
+     ```bash
+     git branch -a
+     git checkout 1-todo-manager
+     ```
    - Make your changes and implement the required features.
    - Be sure to commit your changes frequently and push them to your forked repository.
 
-5. **Add 'rhemsuda' and 'augyg' as Watchers**
+6. **Add 'rhemsuda' and 'augyg' as Watchers**
    - Once you are done with your changes, go to your forked repository on GitHub.
    - Navigate to the **Settings** tab.
    - Under **Collaborators and teams**, add the following users as watchers:
      - `rhemsuda`
      - `augyg`
 
-6. **Send Us a Message**
+7. **Send Us a Message**
    - After adding the watchers and ensuring everything is pushed to the repository, send us a message to indicate that you have finished the project.
 
-7. **Project Submission Confirmation**
+8. **Project Submission Confirmation**
    - Once we receive your message, we will review the repository and notify you of any feedback or final approval.

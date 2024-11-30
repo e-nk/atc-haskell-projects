@@ -3,7 +3,7 @@ Fork this repository - each branch is a different project
 
 ## Instructions for Completing and Submitting Your Project
 
-1. **Fork the Project**
+1. **IMPORTANT: Fork the Project**
    - Click the "Fork" button at the top-right of the main page of this repository to create your own copy of the repository.
    - **Make sure you deselect the "Copy the main branch only" option** so that all projects are copied to the forked repository.
 
